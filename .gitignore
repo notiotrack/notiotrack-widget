@@ -1,0 +1,4 @@
+node_modules/
+build/script.js
+*.map
+.DS_Store
