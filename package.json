@@ -11,5 +11,7 @@
   "devDependencies": {
     "esbuild": "^0.19.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@mozilla/readability": "^0.4.4"
+  }
 }
