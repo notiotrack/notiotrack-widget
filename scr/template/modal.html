@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal - Zgłoś nielegałną treść</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal {
+            background-color: #ffffff;
+            border: 3px solid #4A90E2;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            color: #4A90E2;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-flag {
+            width: 30px;
+            height: 30px;
+            background-color: #FF8C42;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+            position: relative;
+        }
+
+        .icon-flag::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            background-color: #FF6B1A;
+        }
+
+        .icon-shield {
+            width: 30px;
+            height: 30px;
+            background-color: #4A90E2;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .violation-section {
+            margin-bottom: 25px;
+        }
+
+        .violation-label {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .violation-options {
+            list-style: none;
+        }
+
+        .violation-option {
+            color: #4A90E2;
+            font-size: 14px;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .violation-option:hover {
+            color: #357ABD;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #357ABD;
+        }
+
+        .submit-button:active {
+            background-color: #2E6AA5;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <h1 class="modal-title">Zgłoś nielegalną treść</h1>
+            <div class="modal-icons">
+                <div class="icon-flag"></div>
+                <div class="icon-shield">N</div>
+            </div>
+        </div>
+
+        <div class="violation-section">
+            <label class="violation-label">Rodzaj naruszenia</label>
+            <ul class="violation-options">
+                <li class="violation-option">Treści szerzące nienawiść</li>
+                <li class="violation-option">Dezinformacja/Fake News</li>
+                <li class="violation-option">Naruszenie praw autorskich</li>
+                <li class="violation-option">Mowa nienawiść</li>
+                <li class="violation-option">Cyberprzemoc</li>
+                <li class="violation-option">Inne (sprecyzuj)</li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <input type="email" class="form-input" placeholder="Adres e-mail">
+        </div>
+
+        <div class="form-group">
+            <textarea class="form-input form-textarea" placeholder="Dodatkowe informacje (opcjonalne)"></textarea>
+        </div>
+
+        <button class="submit-button">Wyślij zgłoszenie</button>
+    </div>
+</body>
+</html>
