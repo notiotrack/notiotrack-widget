@@ -36,16 +36,13 @@ const htmlLoader = {
   }
 };
 
-const buildOptions = {
+const baseBuildOptions = {
   entryPoints: ['scr/app.js'],
   bundle: true,
-  outfile: 'build/script.js',
   format: 'iife',
   globalName: 'ApiNotioTrack',
   platform: 'browser',
   target: ['es2020'],
-  minify: false, // Set to true for production
-  sourcemap: false, // Set to true for debugging
   plugins: [svgLoader, htmlLoader],
   banner: {
     js: `/*!
@@ -55,18 +52,69 @@ const buildOptions = {
   }
 };
 
+// Build options for development version (script.js)
+const devBuildOptions = {
+  ...baseBuildOptions,
+  outfile: 'build/script.js',
+  minify: false,
+  sourcemap: 'inline'
+};
+
+// Build options for production version (script.min.js)
+const prodBuildOptions = {
+  ...baseBuildOptions,
+  outfile: 'build/script.min.js',
+  minify: true,
+  sourcemap: true,
+  sourcemap: 'external'
+};
+
 async function build() {
   try {
     if (isWatch) {
-      const ctx = await esbuild.context(buildOptions);
-      await ctx.watch();
-      console.log('Watching for changes...');
+      // For watch mode, build both versions
+      const devCtx = await esbuild.context(devBuildOptions);
+      const prodCtx = await esbuild.context(prodBuildOptions);
+
+      await Promise.all([
+        devCtx.watch(),
+        prodCtx.watch()
+      ]);
+
+      console.log('🔍 Watching for changes in:');
+      console.log('   - scr/app.js');
+      console.log('   - scr/template/modal.html');
+      console.log('   - icon.svg');
+      console.log('   - node_modules (dependencies)');
+      console.log('\n✅ Initial build completed!');
+      console.log('📦 Output files:');
+      console.log('   - build/script.js (development, with inline sourcemap)');
+      console.log('   - build/script.min.js (production, with external sourcemap)');
+      console.log('   - build/script.min.js.map (source map)');
+      console.log('\n⏳ Waiting for changes... (Press Ctrl+C to stop)');
+
+      // Handle graceful shutdown
+      process.on('SIGINT', async () => {
+        await Promise.all([devCtx.dispose(), prodCtx.dispose()]);
+        process.exit(0);
+      });
     } else {
-      await esbuild.build(buildOptions);
-      console.log('Build completed successfully!');
+      // Build both versions
+      console.log('🔨 Building development version (script.js)...');
+      await esbuild.build(devBuildOptions);
+      console.log('✅ Development build completed!');
+
+      console.log('🔨 Building production version (script.min.js)...');
+      await esbuild.build(prodBuildOptions);
+      console.log('✅ Production build completed!');
+
+      console.log('\n📦 Build completed successfully!');
+      console.log('   - build/script.js (development, with inline sourcemap)');
+      console.log('   - build/script.min.js (production, with external sourcemap)');
+      console.log('   - build/script.min.js.map (source map)');
     }
   } catch (error) {
-    console.error('Build failed:', error);
+    console.error('❌ Build failed:', error);
     process.exit(1);
   }
 }

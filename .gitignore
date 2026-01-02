@@ -1,5 +1,7 @@
 node_modules/
 build/script.js
+build/script.min.js
+build/script.min.js.map
 *.map
 .DS_Store
 package-lock.json
