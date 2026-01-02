@@ -6,28 +6,30 @@
 import { Readability } from '@mozilla/readability';
 import iconSvg from '../icon.svg';
 import modalTemplate from './template/modal.html';
+import { detectLanguage, getTranslations } from './i18n/language-detector.js';
 
 /**
- * Translations/strings for the modal and UI
+ * Current language (will be set on initialization)
  */
-const strings = {
-  modal: {
-    title: 'Zgłoś nielegalną treść',
-    violationLabel: 'Rodzaj naruszenia',
-    violations: [
-      'Treści szerzące nienawiść',
-      'Dezinformacja/Fake News',
-      'Naruszenie praw autorskich',
-      'Mowa nienawiść',
-      'Cyberprzemoc',
-      'Inne (sprecyzuj)'
-    ],
-    emailPlaceholder: 'Adres e-mail',
-    additionalInfoPlaceholder: 'Dodatkowe informacje (opcjonalne)',
-    submitButton: 'Wyślij zgłoszenie',
-    badgeTitle: 'Zgłoś nielegalną treść'
+let currentLanguage = null;
+
+/**
+ * Current translations (will be set on initialization)
+ */
+let strings = null;
+
+/**
+ * Initialize i18n system
+ */
+function initI18n() {
+  currentLanguage = detectLanguage();
+  strings = getTranslations(currentLanguage);
+
+  // Save detected language to localStorage for future use
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('api-notiotrack-language', currentLanguage);
   }
-};
+}
 
 /**
  * Main library object
@@ -37,7 +39,58 @@ const ApiNotioTrack = {
    * Initialize the library
    */
   init() {
+    initI18n();
     console.log('ApiNotioTrack initialized');
+  },
+
+  /**
+   * Set language for the library
+   * @param {string} lang - Language code (e.g., 'pl', 'en', 'de', 'fr', 'es')
+   * @returns {boolean} True if language was set successfully
+   */
+  setLanguage(lang) {
+    const oldLang = currentLanguage;
+    currentLanguage = detectLanguage(lang);
+    strings = getTranslations(currentLanguage);
+
+    // Save to localStorage
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('api-notiotrack-language', currentLanguage);
+    }
+
+    // If language changed, update existing UI elements
+    if (oldLang !== currentLanguage) {
+      this.updateUIForLanguage();
+    }
+
+    return currentLanguage === lang || currentLanguage === detectLanguage(lang);
+  },
+
+  /**
+   * Get current language
+   * @returns {string} Current language code
+   */
+  getLanguage() {
+    return currentLanguage || detectLanguage();
+  },
+
+  /**
+   * Update UI elements when language changes
+   */
+  updateUIForLanguage() {
+    // Update badge title if it exists (find by data attribute)
+    const badge = document.querySelector('[data-api-notiotrack-badge="true"]');
+    if (badge) {
+      badge.setAttribute('title', strings.modal.badgeTitle);
+    }
+
+    // If modal is open, update it
+    const modalDialog = document.getElementById('api-notiotrack-modal');
+    if (modalDialog && modalDialog.open) {
+      // Rebuild modal with new translations
+      modalDialog.remove();
+      this.openReportModal();
+    }
   },
 
   /**
@@ -92,6 +145,7 @@ const ApiNotioTrack = {
           // Make badge clickable to open modal
           badge.style.cursor = 'pointer';
           badge.setAttribute('title', strings.modal.badgeTitle);
+          badge.setAttribute('data-api-notiotrack-badge', 'true'); // Mark badge for easy finding
           badge.addEventListener('click', () => {
             this.openReportModal();
           });
@@ -321,8 +375,11 @@ const ApiNotioTrack = {
   }
 };
 
-// Auto-extract article title when script is loaded
+// Auto-initialize i18n and extract article title when script is loaded
 if (typeof document !== 'undefined') {
+  // Initialize i18n first
+  initI18n();
+
   // Wait for DOM to be ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
