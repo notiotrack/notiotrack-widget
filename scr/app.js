@@ -350,20 +350,23 @@ const ApiNotioTrack = {
           document.head.appendChild(styleElement);
         }
 
-        // Add close button functionality
+        // Add close button functionality (X button)
+        const closeButton = modalDialog.querySelector('.modal-close-button');
+        if (closeButton) {
+          // Remove focus from close button to prevent outline
+          closeButton.blur();
+          closeButton.addEventListener('click', () => {
+            modalDialog.close();
+          });
+        }
+
+        // Add submit button functionality
         const submitButton = modalDialog.querySelector('.submit-button');
         if (submitButton) {
           submitButton.addEventListener('click', () => {
             modalDialog.close();
           });
         }
-
-        // Close on backdrop click
-        modalDialog.addEventListener('click', (e) => {
-          if (e.target === modalDialog) {
-            modalDialog.close();
-          }
-        });
 
         // Add to document
         document.body.appendChild(modalDialog);
@@ -373,6 +376,11 @@ const ApiNotioTrack = {
     // Open the modal
     if (modalDialog) {
       modalDialog.showModal();
+      // Remove focus from close button if it has focus
+      const closeButton = modalDialog.querySelector('.modal-close-button');
+      if (closeButton && document.activeElement === closeButton) {
+        closeButton.blur();
+      }
     }
   }
 };
