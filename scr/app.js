@@ -97,16 +97,25 @@ const ApiNotioTrack = {
   /**
    * Initialize badges on the page
    * Calls initBadgesOnTitles and initBadgesOnComments asynchronously
+   * If no badges were added, calls initBadgesOnFooter
    */
   async initBadges() {
-    await Promise.all([
+    const [titlesCount, commentsCount] = await Promise.all([
       this.initBadgesOnTitles(),
       this.initBadgesOnComments()
     ]);
+
+    const totalCount = titlesCount + commentsCount;
+
+    // If no badges were added, add badge to footer
+    if (totalCount === 0) {
+      await this.initBadgesOnFooter();
+    }
   },
 
   /**
    * Initialize badges on article titles
+   * @returns {Promise<number>} Number of badges added (0 or 1)
    */
   async initBadgesOnTitles() {
     try {
@@ -130,6 +139,7 @@ const ApiNotioTrack = {
             () => this.openReportModal()
           );
           titleElement.appendChild(badge);
+          return 1;
         } else {
           console.log('Title element not found in original document');
         }
@@ -139,11 +149,13 @@ const ApiNotioTrack = {
     } catch (error) {
       console.error('Error initializing badges on titles:', error);
     }
+    return 0;
   },
 
   /**
    * Initialize badges on comments
    * Finds comment elements by class name and adds badges to them
+   * @returns {Promise<number>} Number of badges added
    */
   async initBadgesOnComments() {
     try {
@@ -189,11 +201,42 @@ const ApiNotioTrack = {
           // Insert badge at the beginning of the comment element
           commentElement.insertBefore(badge, commentElement.firstChild);
         });
+
+        return commentElements.length;
       } else {
         console.log('No comment elements found');
       }
     } catch (error) {
       console.error('Error initializing badges on comments:', error);
+    }
+    return 0;
+  },
+
+  /**
+   * Initialize badge on footer
+   * Adds badge in the bottom right corner of the viewport, inserted before closing </body> tag
+   */
+  async initBadgesOnFooter() {
+    try {
+      const badge = createBadgeElement(
+        document.body,
+        strings.modal.badgeTitle,
+        () => this.openReportModal()
+      );
+
+      // Position badge in bottom right corner of viewport
+      badge.style.position = 'fixed';
+      badge.style.bottom = '15px';
+      badge.style.right = '15px';
+      badge.style.marginLeft = '0';
+      badge.style.zIndex = '10';
+
+      // Insert badge before closing </body> tag (as last element in body)
+      document.body.appendChild(badge);
+
+      console.log('Badge added to footer (before closing </body> tag)');
+    } catch (error) {
+      console.error('Error initializing badge on footer:', error);
     }
   },
 
@@ -375,9 +418,9 @@ const ApiNotioTrack = {
       // Save scroll position before opening modal (showModal() may cause scroll to top)
       const savedScrollY = window.scrollY || document.documentElement.scrollTop;
       const savedScrollX = window.scrollX || document.documentElement.scrollLeft;
-      
+
       modalDialog.showModal();
-      
+
       // Restore scroll position immediately using instant behavior
       // Try multiple methods to ensure scroll is restored
       const restoreScroll = () => {
@@ -387,10 +430,10 @@ const ApiNotioTrack = {
         document.body.scrollTop = savedScrollY;
         document.body.scrollLeft = savedScrollX;
       };
-      
+
       // Restore immediately
       restoreScroll();
-      
+
       // Also restore asynchronously in case browser delays the scroll
       requestAnimationFrame(() => {
         restoreScroll();
@@ -398,7 +441,7 @@ const ApiNotioTrack = {
           restoreScroll();
         });
       });
-      
+
       // Remove focus from close button if it has focus
       const closeButton = modalDialog.querySelector('.modal-close-button');
       if (closeButton && document.activeElement === closeButton) {
