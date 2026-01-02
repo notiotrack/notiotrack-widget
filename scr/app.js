@@ -160,7 +160,6 @@ const ApiNotioTrack = {
 
         if (articleElement) {
           console.log('Found article container:', articleElement);
-          articleElement.style.border = '2px solid blue';
         } else {
           console.log('Article container not found in original document');
         }
@@ -288,6 +287,9 @@ const ApiNotioTrack = {
     result = result.replace(/\{\{ADDITIONAL_INFO_PLACEHOLDER\}\}/g, strings.modal.additionalInfoPlaceholder);
     result = result.replace(/\{\{SUBMIT_BUTTON\}\}/g, strings.modal.submitButton);
 
+    // Replace about text
+    result = result.replace(/\{\{ABOUT\}\}/g, strings.modal.about);
+
     // Replace icon SVG - parse SVG string and add inline styles
     // Extract SVG element from the string (remove XML declaration if present)
     let svgContent = iconSvg.trim();
@@ -334,7 +336,7 @@ const ApiNotioTrack = {
         // Create new dialog element
         modalDialog = document.createElement('dialog');
         modalDialog.id = 'api-notiotrack-modal';
-        modalDialog.className = 'modal';
+        modalDialog.className = 'api-notiotrack-modal';
 
         // Copy content from template (without the dialog tag itself)
         const dialogContent = templateDialog.innerHTML;

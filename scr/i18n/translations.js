@@ -19,7 +19,8 @@ export const translations = {
       emailPlaceholder: 'Adres e-mail',
       additionalInfoPlaceholder: 'Dodatkowe informacje (opcjonalne)',
       submitButton: 'Wyślij zgłoszenie',
-      badgeTitle: 'Zgłoś nielegalną treść'
+      badgeTitle: 'Zgłoś nielegalną treść',
+      about: 'Usługa obsługiwana przez <a href="https://notiotrack.com" target="_blank">NotioTrack.com</a>'
     }
   },
   en: {
@@ -37,7 +38,8 @@ export const translations = {
       emailPlaceholder: 'Email address',
       additionalInfoPlaceholder: 'Additional information (optional)',
       submitButton: 'Submit report',
-      badgeTitle: 'Report illegal content'
+      badgeTitle: 'Report illegal content',
+      about: 'Service supported by NotioTrack.com'
     }
   },
   de: {
@@ -55,7 +57,8 @@ export const translations = {
       emailPlaceholder: 'E-Mail-Adresse',
       additionalInfoPlaceholder: 'Zusätzliche Informationen (optional)',
       submitButton: 'Meldung senden',
-      badgeTitle: 'Illegale Inhalte melden'
+      badgeTitle: 'Illegale Inhalte melden',
+      about: 'Dienst unterstützt von NotioTrack.com'
     }
   },
   fr: {
@@ -73,7 +76,8 @@ export const translations = {
       emailPlaceholder: 'Adresse e-mail',
       additionalInfoPlaceholder: 'Informations supplémentaires (optionnel)',
       submitButton: 'Envoyer le signalement',
-      badgeTitle: 'Signaler un contenu illégal'
+      badgeTitle: 'Signaler un contenu illégal',
+      about: 'Service supporté par NotioTrack.com'
     }
   },
   es: {
@@ -91,7 +95,8 @@ export const translations = {
       emailPlaceholder: 'Dirección de correo electrónico',
       additionalInfoPlaceholder: 'Información adicional (opcional)',
       submitButton: 'Enviar reporte',
-      badgeTitle: 'Reportar contenido ilegal'
+      badgeTitle: 'Reportar contenido ilegal',
+      about: 'Servicio soportado por NotioTrack.com'
     }
   }
 };

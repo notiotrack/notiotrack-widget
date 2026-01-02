@@ -1,21 +1,12 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modal - Zgłoś nielegałną treść</title>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
+        .api-notiotrack-modal {
 
-        dialog {
+            & * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            }
+
             margin: auto;
             padding: 0;
             border: 3px solid #4A90E2;
@@ -34,17 +25,22 @@
             }
         }
 
-        dialog::backdrop {
+        .api-notiotrack-modal::backdrop {
             background-color: rgba(0, 0, 0, 0.5);
         }
 
-        .modal {
+        .api-notiotrack-modal {
             background-color: #ffffff;
             padding: 30px;
         }
 
         .modal-header {
             margin-bottom: 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
         }
 
         .modal-title {
@@ -150,6 +146,7 @@
         .submit-button {
             width: 100%;
             background-color: #4A90E2;
+            text-align: center;
             color: white;
             border: none;
             border-radius: 6px;
@@ -167,15 +164,21 @@
         .submit-button:active {
             background-color: #2E6AA5;
         }
+
+        .about-text {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
-</head>
-<body>
-    <dialog class="modal" open>
+
+    <dialog class="api-notiotrack-modal" open>
         <div class="modal-header">
-            <h1 class="modal-title">{{MODAL_TITLE}}</h1>
             <div class="modal-icons">
                 {{ICON_SVG}}
             </div>
+            <h1 class="modal-title">{{MODAL_TITLE}}</h1>
         </div>
 
         <div class="violation-section">
@@ -194,6 +197,8 @@
         </div>
 
         <button class="submit-button">{{SUBMIT_BUTTON}}</button>
+
+        <div class="about-text">
+            {{ABOUT}}
+        </div>
     </dialog>
-</body>
-</html>
