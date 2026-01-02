@@ -22,6 +22,20 @@ const svgLoader = {
   }
 };
 
+// Plugin to load HTML files as text
+const htmlLoader = {
+  name: 'html-loader',
+  setup(build) {
+    build.onLoad({ filter: /\.html$/ }, (args) => {
+      const contents = readFileSync(args.path, 'utf8');
+      return {
+        contents,
+        loader: 'text'
+      };
+    });
+  }
+};
+
 const buildOptions = {
   entryPoints: ['scr/app.js'],
   bundle: true,
@@ -32,7 +46,7 @@ const buildOptions = {
   target: ['es2020'],
   minify: false, // Set to true for production
   sourcemap: false, // Set to true for debugging
-  plugins: [svgLoader],
+  plugins: [svgLoader, htmlLoader],
   banner: {
     js: `/*!
  * ApiNotioTrack Library

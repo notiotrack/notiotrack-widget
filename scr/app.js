@@ -5,6 +5,7 @@
 
 import { Readability } from '@mozilla/readability';
 import iconSvg from '../icon.svg';
+import modalTemplate from './template/modal.html';
 
 /**
  * Main library object
@@ -65,6 +66,13 @@ const ApiNotioTrack = {
 
             badge.appendChild(svgElement);
           }
+
+          // Make badge clickable to open modal
+          badge.style.cursor = 'pointer';
+          badge.setAttribute('title', 'Zgłoś nielegalną treść');
+          badge.addEventListener('click', () => {
+            this.openReportModal();
+          });
 
           titleElement.appendChild(badge);
         } else {
@@ -177,6 +185,68 @@ const ApiNotioTrack = {
     }
 
     return bestMatch;
+  },
+
+  /**
+   * Open report modal dialog
+   */
+  openReportModal() {
+    // Check if modal already exists
+    let modalDialog = document.getElementById('api-notiotrack-modal');
+
+    if (!modalDialog) {
+      // Extract dialog content and styles from template
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(modalTemplate, 'text/html');
+
+      // Get styles from template
+      const styles = doc.querySelector('style');
+
+      // Get dialog element from template
+      const templateDialog = doc.querySelector('dialog');
+
+      if (templateDialog) {
+        // Create new dialog element
+        modalDialog = document.createElement('dialog');
+        modalDialog.id = 'api-notiotrack-modal';
+        modalDialog.className = 'modal';
+
+        // Copy content from template (without the dialog tag itself)
+        const dialogContent = templateDialog.innerHTML;
+        modalDialog.innerHTML = dialogContent;
+
+        // Add styles to document if not already present
+        if (styles && !document.getElementById('api-notiotrack-modal-styles')) {
+          const styleElement = document.createElement('style');
+          styleElement.id = 'api-notiotrack-modal-styles';
+          styleElement.textContent = styles.textContent;
+          document.head.appendChild(styleElement);
+        }
+
+        // Add close button functionality
+        const submitButton = modalDialog.querySelector('.submit-button');
+        if (submitButton) {
+          submitButton.addEventListener('click', () => {
+            modalDialog.close();
+          });
+        }
+
+        // Close on backdrop click
+        modalDialog.addEventListener('click', (e) => {
+          if (e.target === modalDialog) {
+            modalDialog.close();
+          }
+        });
+
+        // Add to document
+        document.body.appendChild(modalDialog);
+      }
+    }
+
+    // Open the modal
+    if (modalDialog) {
+      modalDialog.showModal();
+    }
   }
 };
 

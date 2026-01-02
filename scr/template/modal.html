@@ -13,22 +13,25 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        dialog {
+            margin: auto;
+            padding: 0;
+            border: 3px solid #4A90E2;
+            border-radius: 8px;
+            max-width: 500px;
+            width: calc(100% - 40px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        dialog::backdrop {
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
         }
 
         .modal {
             background-color: #ffffff;
-            border: 3px solid #4A90E2;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 100%;
             padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
@@ -158,12 +161,11 @@
     </style>
 </head>
 <body>
-    <div class="modal">
+    <dialog class="modal" open>
         <div class="modal-header">
             <h1 class="modal-title">Zgłoś nielegalną treść</h1>
             <div class="modal-icons">
-                <div class="icon-flag"></div>
-                <div class="icon-shield">N</div>
+                <img src="../icon.svg" alt="Icon" class="icon-flag">
             </div>
         </div>
 
@@ -188,6 +190,6 @@
         </div>
 
         <button class="submit-button">Wyślij zgłoszenie</button>
-    </div>
+    </dialog>
 </body>
 </html>
