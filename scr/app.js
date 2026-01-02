@@ -155,15 +155,6 @@ const ApiNotioTrack = {
           console.log('Title element not found in original document');
         }
 
-        // 2. ZNAJDŹ CAŁY ARTYKUŁ (kontener) w oryginalnym dokumencie
-        const articleElement = this.findArticleContainer(document, article.textContent);
-
-        if (articleElement) {
-          console.log('Found article container:', articleElement);
-        } else {
-          console.log('Article container not found in original document');
-        }
-
         return article.title;
       } else {
         console.log('No article found');
@@ -228,38 +219,6 @@ const ApiNotioTrack = {
 
     // Return best match if at least 50% of words match
     return bestScore >= 0.5 ? bestMatch : null;
-  },
-
-  /**
-   * Find article container element
-   * @param {Document} root - Root element to search in
-   * @param {string} articleText - Full article text content
-   * @returns {HTMLElement|null}
-   */
-  findArticleContainer(root, articleText) {
-    // Spróbuj semantycznych tagów
-    let container = root.querySelector('article, [role="main"], main');
-
-    if (container) return container;
-
-    // Znajdź element zawierający najwięcej tekstu z artykułu
-    const candidates = root.querySelectorAll('div, section');
-    const targetLength = articleText.length;
-    let bestMatch = null;
-    let bestScore = 0;
-
-    for (let el of candidates) {
-      const elText = el.textContent.trim();
-      const similarity = elText.length / targetLength;
-
-      // Szukamy elementu o podobnej długości tekstu (0.8-1.2x)
-      if (similarity >= 0.8 && similarity <= 1.2 && similarity > bestScore) {
-        bestScore = similarity;
-        bestMatch = el;
-      }
-    }
-
-    return bestMatch;
   },
 
   /**
