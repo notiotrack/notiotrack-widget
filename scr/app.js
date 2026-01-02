@@ -94,9 +94,20 @@ const ApiNotioTrack = {
   },
 
   /**
-   * Extract article title using Readability and find original DOM elements
+   * Initialize badges on the page
+   * Calls initBadgesOnTitles and initBadgesOnComments asynchronously
    */
-  extractArticleTitle() {
+  async initBadges() {
+    await Promise.all([
+      this.initBadgesOnTitles(),
+      this.initBadgesOnComments()
+    ]);
+  },
+
+  /**
+   * Initialize badges on article titles
+   */
+  async initBadgesOnTitles() {
     try {
       // Clone document to avoid modifying the original during parsing
       const documentClone = document.cloneNode(true);
@@ -107,63 +118,76 @@ const ApiNotioTrack = {
         console.log('Article title:', article.title);
         console.log(article);
 
-        // 1. ZNAJDŹ TYTUŁ (h1) w oryginalnym dokumencie
+        // Find title (h1) in original document
         const titleElement = this.findElementByText(document, 'h1, h2', article.title);
 
         if (titleElement) {
           console.log('Found title element:', titleElement);
-          // Dodaj ikonę SVG obok tytułu
-          const badge = document.createElement('span');
-          badge.style.display = 'inline-block';
-          badge.style.verticalAlign = 'super';
-          badge.style.marginLeft = '0.5em';
-
-          // Get font size from title element (or use default)
-          const titleFontSize = window.getComputedStyle(titleElement).fontSize;
-          const fontSizeValue = parseFloat(titleFontSize) || 16;
-          const iconHeight = fontSizeValue * 0.6;
-
-          // Create SVG element from imported SVG string
-          const svgContainer = document.createElement('div');
-          svgContainer.innerHTML = iconSvg;
-          const svgElement = svgContainer.querySelector('svg');
-
-          if (svgElement) {
-            // Set SVG attributes
-            svgElement.style.height = `${iconHeight}px`;
-            svgElement.style.width = 'auto';
-            svgElement.style.display = 'inline-block';
-            svgElement.style.verticalAlign = 'middle';
-            // Remove fixed width/height from SVG if present
-            svgElement.removeAttribute('width');
-            svgElement.removeAttribute('height');
-            svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-
-            badge.appendChild(svgElement);
-          }
-
-          // Make badge clickable to open modal
-          badge.style.cursor = 'pointer';
-          badge.setAttribute('title', strings.modal.badgeTitle);
-          badge.setAttribute('data-api-notiotrack-badge', 'true'); // Mark badge for easy finding
-          badge.addEventListener('click', () => {
-            this.openReportModal();
-          });
-
+          const badge = this.createBadgeElement(titleElement);
           titleElement.appendChild(badge);
         } else {
           console.log('Title element not found in original document');
         }
-
-        return article.title;
       } else {
         console.log('No article found');
-        return null;
       }
     } catch (error) {
-      console.error('Error extracting article title:', error);
-      return null;
+      console.error('Error initializing badges on titles:', error);
     }
+  },
+
+  /**
+   * Initialize badges on comments
+   * Placeholder for future implementation
+   */
+  async initBadgesOnComments() {
+    // TODO: Implement badge initialization on comments
+  },
+
+  /**
+   * Create badge element (span with SVG icon) that can be appended to any element
+   * @param {HTMLElement} targetElement - Element to which badge will be appended (used for font size calculation)
+   * @returns {HTMLElement} Badge element ready to be appended
+   */
+  createBadgeElement(targetElement) {
+    const badge = document.createElement('span');
+    badge.style.display = 'inline-block';
+    badge.style.verticalAlign = 'super';
+    badge.style.marginLeft = '0.5em';
+
+    // Get font size from target element (or use default)
+    const targetFontSize = window.getComputedStyle(targetElement).fontSize;
+    const fontSizeValue = parseFloat(targetFontSize) || 16;
+    const iconHeight = fontSizeValue * 0.6;
+
+    // Create SVG element from imported SVG string
+    const svgContainer = document.createElement('div');
+    svgContainer.innerHTML = iconSvg;
+    const svgElement = svgContainer.querySelector('svg');
+
+    if (svgElement) {
+      // Set SVG attributes
+      svgElement.style.height = `${iconHeight}px`;
+      svgElement.style.width = 'auto';
+      svgElement.style.display = 'inline-block';
+      svgElement.style.verticalAlign = 'middle';
+      // Remove fixed width/height from SVG if present
+      svgElement.removeAttribute('width');
+      svgElement.removeAttribute('height');
+      svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+      badge.appendChild(svgElement);
+    }
+
+    // Make badge clickable to open modal
+    badge.style.cursor = 'pointer';
+    badge.setAttribute('title', strings.modal.badgeTitle);
+    badge.setAttribute('data-api-notiotrack-badge', 'true'); // Mark badge for easy finding
+    badge.addEventListener('click', () => {
+      this.openReportModal();
+    });
+
+    return badge;
   },
 
   /**
@@ -352,11 +376,11 @@ if (typeof document !== 'undefined') {
   // Wait for DOM to be ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      ApiNotioTrack.extractArticleTitle();
+      ApiNotioTrack.initBadges();
     });
   } else {
     // DOM is already ready
-    ApiNotioTrack.extractArticleTitle();
+    ApiNotioTrack.initBadges();
   }
 }
 
