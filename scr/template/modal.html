@@ -163,33 +163,28 @@
 <body>
     <dialog class="modal" open>
         <div class="modal-header">
-            <h1 class="modal-title">Zgłoś nielegalną treść</h1>
+            <h1 class="modal-title">{{MODAL_TITLE}}</h1>
             <div class="modal-icons">
-                <img src="../icon.svg" alt="Icon" class="icon-flag">
+                {{ICON_SVG}}
             </div>
         </div>
 
         <div class="violation-section">
-            <label class="violation-label">Rodzaj naruszenia</label>
+            <label class="violation-label">{{VIOLATION_LABEL}}</label>
             <ul class="violation-options">
-                <li class="violation-option">Treści szerzące nienawiść</li>
-                <li class="violation-option">Dezinformacja/Fake News</li>
-                <li class="violation-option">Naruszenie praw autorskich</li>
-                <li class="violation-option">Mowa nienawiść</li>
-                <li class="violation-option">Cyberprzemoc</li>
-                <li class="violation-option">Inne (sprecyzuj)</li>
+                {{VIOLATION_OPTIONS}}
             </ul>
         </div>
 
         <div class="form-group">
-            <input type="email" class="form-input" placeholder="Adres e-mail">
+            <input type="email" class="form-input" placeholder="{{EMAIL_PLACEHOLDER}}">
         </div>
 
         <div class="form-group">
-            <textarea class="form-input form-textarea" placeholder="Dodatkowe informacje (opcjonalne)"></textarea>
+            <textarea class="form-input form-textarea" placeholder="{{ADDITIONAL_INFO_PLACEHOLDER}}"></textarea>
         </div>
 
-        <button class="submit-button">Wyślij zgłoszenie</button>
+        <button class="submit-button">{{SUBMIT_BUTTON}}</button>
     </dialog>
 </body>
 </html>

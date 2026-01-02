@@ -8,6 +8,28 @@ import iconSvg from '../icon.svg';
 import modalTemplate from './template/modal.html';
 
 /**
+ * Translations/strings for the modal and UI
+ */
+const strings = {
+  modal: {
+    title: 'Zgłoś nielegalną treść',
+    violationLabel: 'Rodzaj naruszenia',
+    violations: [
+      'Treści szerzące nienawiść',
+      'Dezinformacja/Fake News',
+      'Naruszenie praw autorskich',
+      'Mowa nienawiść',
+      'Cyberprzemoc',
+      'Inne (sprecyzuj)'
+    ],
+    emailPlaceholder: 'Adres e-mail',
+    additionalInfoPlaceholder: 'Dodatkowe informacje (opcjonalne)',
+    submitButton: 'Wyślij zgłoszenie',
+    badgeTitle: 'Zgłoś nielegalną treść'
+  }
+};
+
+/**
  * Main library object
  */
 const ApiNotioTrack = {
@@ -69,7 +91,7 @@ const ApiNotioTrack = {
 
           // Make badge clickable to open modal
           badge.style.cursor = 'pointer';
-          badge.setAttribute('title', 'Zgłoś nielegalną treść');
+          badge.setAttribute('title', strings.modal.badgeTitle);
           badge.addEventListener('click', () => {
             this.openReportModal();
           });
@@ -188,6 +210,52 @@ const ApiNotioTrack = {
   },
 
   /**
+   * Replace placeholders in template with actual strings
+   * @param {string} template - HTML template string
+   * @returns {string} - Template with replaced placeholders
+   */
+  replaceTemplateStrings(template) {
+    let result = template;
+
+    // Replace modal title
+    result = result.replace(/\{\{MODAL_TITLE\}\}/g, strings.modal.title);
+
+    // Replace violation label
+    result = result.replace(/\{\{VIOLATION_LABEL\}\}/g, strings.modal.violationLabel);
+
+    // Replace violation options
+    const violationsHtml = strings.modal.violations
+      .map(violation => `<li class="violation-option">${violation}</li>`)
+      .join('\n                ');
+    result = result.replace(/\{\{VIOLATION_OPTIONS\}\}/g, violationsHtml);
+
+    // Replace placeholders
+    result = result.replace(/\{\{EMAIL_PLACEHOLDER\}\}/g, strings.modal.emailPlaceholder);
+    result = result.replace(/\{\{ADDITIONAL_INFO_PLACEHOLDER\}\}/g, strings.modal.additionalInfoPlaceholder);
+    result = result.replace(/\{\{SUBMIT_BUTTON\}\}/g, strings.modal.submitButton);
+
+    // Replace icon SVG - parse SVG string and add inline styles
+    // Extract SVG element from the string (remove XML declaration if present)
+    let svgContent = iconSvg.trim();
+    // Remove XML declaration if present
+    svgContent = svgContent.replace(/^<\?xml[^>]*\?>\s*/i, '');
+    // Extract SVG tag and its content
+    const svgMatch = svgContent.match(/<svg[^>]*>[\s\S]*<\/svg>/i);
+    if (svgMatch) {
+      let svgHtml = svgMatch[0];
+      // Remove width and height attributes if present
+      svgHtml = svgHtml.replace(/\s+(width|height)=["'][^"']*["']/gi, '');
+      // Add style attribute for sizing
+      svgHtml = svgHtml.replace(/<svg([^>]*)>/i, '<svg$1 style="width: 30px; height: 30px; display: inline-block; vertical-align: middle; preserveAspectRatio: xMidYMid meet;">');
+      result = result.replace(/\{\{ICON_SVG\}\}/g, svgHtml);
+    } else {
+      result = result.replace(/\{\{ICON_SVG\}\}/g, '');
+    }
+
+    return result;
+  },
+
+  /**
    * Open report modal dialog
    */
   openReportModal() {
@@ -195,9 +263,12 @@ const ApiNotioTrack = {
     let modalDialog = document.getElementById('api-notiotrack-modal');
 
     if (!modalDialog) {
+      // Replace placeholders in template with actual strings
+      const templateWithStrings = this.replaceTemplateStrings(modalTemplate);
+
       // Extract dialog content and styles from template
       const parser = new DOMParser();
-      const doc = parser.parseFromString(modalTemplate, 'text/html');
+      const doc = parser.parseFromString(templateWithStrings, 'text/html');
 
       // Get styles from template
       const styles = doc.querySelector('style');
