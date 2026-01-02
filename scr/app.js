@@ -332,6 +332,13 @@ const ApiNotioTrack = {
         const dialogContent = templateDialog.innerHTML;
         modalDialog.innerHTML = dialogContent;
 
+        // Ensure dialog is centered in viewport regardless of scroll position
+        modalDialog.style.position = 'fixed';
+        modalDialog.style.top = '50%';
+        modalDialog.style.left = '50%';
+        modalDialog.style.transform = 'translate(-50%, -50%)';
+        modalDialog.style.margin = '0';
+
         // Add styles to document if not already present
         if (styles && !document.getElementById('api-notiotrack-modal-styles')) {
           const styleElement = document.createElement('style');
@@ -365,7 +372,33 @@ const ApiNotioTrack = {
 
     // Open the modal
     if (modalDialog) {
+      // Save scroll position before opening modal (showModal() may cause scroll to top)
+      const savedScrollY = window.scrollY || document.documentElement.scrollTop;
+      const savedScrollX = window.scrollX || document.documentElement.scrollLeft;
+      
       modalDialog.showModal();
+      
+      // Restore scroll position immediately using instant behavior
+      // Try multiple methods to ensure scroll is restored
+      const restoreScroll = () => {
+        window.scrollTo({ top: savedScrollY, left: savedScrollX, behavior: 'instant' });
+        document.documentElement.scrollTop = savedScrollY;
+        document.documentElement.scrollLeft = savedScrollX;
+        document.body.scrollTop = savedScrollY;
+        document.body.scrollLeft = savedScrollX;
+      };
+      
+      // Restore immediately
+      restoreScroll();
+      
+      // Also restore asynchronously in case browser delays the scroll
+      requestAnimationFrame(() => {
+        restoreScroll();
+        requestAnimationFrame(() => {
+          restoreScroll();
+        });
+      });
+      
       // Remove focus from close button if it has focus
       const closeButton = modalDialog.querySelector('.modal-close-button');
       if (closeButton && document.activeElement === closeButton) {

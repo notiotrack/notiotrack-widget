@@ -41,7 +41,23 @@ export function createBadgeElement(targetElement, badgeTitle, onBadgeClick) {
   badge.style.cursor = 'pointer';
   badge.setAttribute('title', badgeTitle);
   badge.setAttribute('data-api-notiotrack-badge', 'true'); // Mark badge for easy finding
-  badge.addEventListener('click', onBadgeClick);
+  
+  const badgeClickHandler = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onBadgeClick();
+  };
+  
+  badge.addEventListener('click', badgeClickHandler);
+  
+  // Also add click handler to SVG to prevent propagation from SVG element
+  if (svgElement) {
+    svgElement.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      badgeClickHandler(event);
+    });
+  }
 
   return badge;
 }
