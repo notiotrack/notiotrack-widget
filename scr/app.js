@@ -7,6 +7,7 @@ import { Readability } from '@mozilla/readability';
 import iconSvg from '../icon.svg';
 import modalTemplate from './template/modal.html';
 import { detectLanguage, getTranslations } from './i18n/language-detector.js';
+import { createBadgeElement } from './badge-creator.js';
 
 /**
  * Current language (will be set on initialization)
@@ -123,7 +124,11 @@ const ApiNotioTrack = {
 
         if (titleElement) {
           console.log('Found title element:', titleElement);
-          const badge = this.createBadgeElement(titleElement);
+          const badge = createBadgeElement(
+            titleElement,
+            strings.modal.badgeTitle,
+            () => this.openReportModal()
+          );
           titleElement.appendChild(badge);
         } else {
           console.log('Title element not found in original document');
@@ -138,56 +143,58 @@ const ApiNotioTrack = {
 
   /**
    * Initialize badges on comments
-   * Placeholder for future implementation
+   * Finds comment elements by class name and adds badges to them
    */
   async initBadgesOnComments() {
-    // TODO: Implement badge initialization on comments
-  },
+    try {
+      let commentElements = [];
 
-  /**
-   * Create badge element (span with SVG icon) that can be appended to any element
-   * @param {HTMLElement} targetElement - Element to which badge will be appended (used for font size calculation)
-   * @returns {HTMLElement} Badge element ready to be appended
-   */
-  createBadgeElement(targetElement) {
-    const badge = document.createElement('span');
-    badge.style.display = 'inline-block';
-    badge.style.verticalAlign = 'super';
-    badge.style.marginLeft = '0.5em';
+      // First, try to find elements with exact class "comment"
+      commentElements = Array.from(document.querySelectorAll('.comment'));
 
-    // Get font size from target element (or use default)
-    const targetFontSize = window.getComputedStyle(targetElement).fontSize;
-    const fontSizeValue = parseFloat(targetFontSize) || 16;
-    const iconHeight = fontSizeValue * 0.6;
+      // If not found, look for elements with class ending with "-comment"
+      if (commentElements.length === 0) {
+        // Get all elements and filter by class name ending with "-comment"
+        const allElements = document.querySelectorAll('*');
+        commentElements = Array.from(allElements).filter(element => {
+          const classList = Array.from(element.classList);
+          return classList.some(className => className.endsWith('-comment'));
+        });
+      }
 
-    // Create SVG element from imported SVG string
-    const svgContainer = document.createElement('div');
-    svgContainer.innerHTML = iconSvg;
-    const svgElement = svgContainer.querySelector('svg');
+      if (commentElements.length > 0) {
+        console.log(`Found ${commentElements.length} comment element(s)`);
 
-    if (svgElement) {
-      // Set SVG attributes
-      svgElement.style.height = `${iconHeight}px`;
-      svgElement.style.width = 'auto';
-      svgElement.style.display = 'inline-block';
-      svgElement.style.verticalAlign = 'middle';
-      // Remove fixed width/height from SVG if present
-      svgElement.removeAttribute('width');
-      svgElement.removeAttribute('height');
-      svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        // Add badge to each comment element at the beginning
+        commentElements.forEach(commentElement => {
+          // Ensure comment element has position relative for absolute positioning of badge
+          const computedStyle = window.getComputedStyle(commentElement);
+          if (computedStyle.position === 'static') {
+            commentElement.style.position = 'relative';
+          }
 
-      badge.appendChild(svgElement);
+          const badge = createBadgeElement(
+            commentElement,
+            strings.modal.badgeTitle,
+            () => this.openReportModal()
+          );
+
+          // Position badge in top right corner of comment
+          badge.style.position = 'absolute';
+          badge.style.top = '0';
+          badge.style.right = '0';
+          badge.style.marginLeft = '0';
+          badge.style.zIndex = '10';
+
+          // Insert badge at the beginning of the comment element
+          commentElement.insertBefore(badge, commentElement.firstChild);
+        });
+      } else {
+        console.log('No comment elements found');
+      }
+    } catch (error) {
+      console.error('Error initializing badges on comments:', error);
     }
-
-    // Make badge clickable to open modal
-    badge.style.cursor = 'pointer';
-    badge.setAttribute('title', strings.modal.badgeTitle);
-    badge.setAttribute('data-api-notiotrack-badge', 'true'); // Mark badge for easy finding
-    badge.addEventListener('click', () => {
-      this.openReportModal();
-    });
-
-    return badge;
   },
 
   /**
