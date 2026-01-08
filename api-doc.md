@@ -2,7 +2,8 @@
 
 API endpoint for reporting illegal content through the NotioTrack reporting system.
 
-**Base URL:** `https://api.notiotrack.com`
+**Base URL:** `https://app.notizflow.com/wp-json/notiotrack/v1`
+
 
 ---
 
@@ -110,7 +111,9 @@ If authentication fails, the API will return a `401 Unauthorized` response:
 
 Submit a report about illegal content found on a webpage.
 
-**Endpoint:** `POST /api/v1/reports`
+**Endpoint:** `POST /wp-json/notiotrack/v1/reports`
+
+**Full URL:** `https://app.notizflow.com/wp-json/notiotrack/v1/reports`
 
 **Headers:**
 - `Content-Type: application/json` (required)
@@ -368,7 +371,7 @@ async function submitReport(reportData, apiKey) {
       api_key: apiKey
     };
 
-    const response = await fetch('https://api.notiotrack.com/api/v1/reports', {
+    const response = await fetch('https://app.notizflow.com/wp-json/notiotrack/v1/reports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -425,7 +428,7 @@ submitReport(reportData, API_KEY)
 ### cURL Example
 
 ```bash
-curl -X POST https://api.notiotrack.com/api/v1/reports \
+curl -X POST https://app.notizflow.com/wp-json/notiotrack/v1/reports \
   -H "Content-Type: application/json" \
   -H "Origin: https://example.com" \
   -d '{
@@ -471,3 +474,4 @@ For API support or questions, please contact:
 - Support for basic report submission
 - Rate limiting implementation
 - Multi-language support
+
